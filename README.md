@@ -54,6 +54,20 @@ Runs entirely on your local machine using Python standard library components and
 
 ---
 
+## 🕸️ Interactive Identity Graph
+
+PersonaTrace structures relationships around the **Seed Target** at the center, radiating outward through concentric probability rings:
+
+<p align="center">
+  <img src="docs/screenshots/identity-graph.png" alt="PersonaTrace Identity Resolution Graph" width="95%">
+</p>
+
+- **Inner Rings (Strong Confidence)**: Direct verified handles and bidirectional profile links rendered with thick solid lines.
+- **Outer Rings (Weak Signals & Intermediaries)**: Derived bio domains, hashtag overlaps, and stylistic timing matches rendered with dashed connectors.
+- **Amber Bridge Nodes**: Pinpoints accounts connecting two seemingly separate clusters (shared bio URLs, common contacts, or mutual followers).
+
+---
+
 ## 🛡️ Strict Ethical Guardrails
 
 1. **Public Data Only**: No access to private accounts, DMs, or real-time location tracking.
