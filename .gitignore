@@ -1,0 +1,40 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments & virtualenvs
+.venv/
+env/
+venv/
+ENV/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local case data, keys & secrets
+.personatrace_cache/
+.personatrace_keys.json
+.personatrace_login_consent.json
+cases.json
+webhook_events.jsonl
+audit.log
+*.db
+*.sqlite3
+vault.json
+
+# Local output / test artifacts
+live_out/
+demo_out/
+proof_shots/
+temp/
+tmp/
+
+# OS / Editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PersonaTrace Ultimate</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true">◎</div>
+    <div>
+      <h1>PersonaTrace Ultimate</h1>
+      <p data-i18n="brand_tagline">Investigation tool · v9.0.0 · Public data only · No face identification</p>
+    </div>
+  </div>
+  <nav class="top-nav" aria-label="Main">
+    <button id="nav-dashboard" class="nav-btn active" data-i18n="nav_dashboard">Dashboard</button>
+    <button id="nav-settings" class="nav-btn" data-i18n="nav_settings">Settings</button>
+    <select id="export-select" aria-label="Export">
+      <option value="" data-i18n="export_menu">Export ▾</option>
+      <option value="json">JSON</option><option value="html">HTML</option>
+      <option value="csv">CSV</option><option value="pdf">PDF</option>
+      <option value="report">Report draft</option>
+    </select>
+    <label class="field lang-field"><span data-i18n="language_label">Language</span><select id="lang-select" aria-label="Language"><option value="en">English</option><option value="ur">اردو</option><option value="ar">العربية</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option></select></label>
+    <span id="mode-badge" class="badge badge-live" data-i18n="mode_badge">DEMO — initial view only, run a live search</span>
+  </nav>
+</header>
+
+<main id="dashboard-view">
+  <div id="quota-banner" class="quota-banner" hidden></div>
+
+  <!-- Compact search: one clear row, keys tucked away, not six cramped fields -->
+  <section class="panel search-card" aria-labelledby="search-heading">
+    <h2 id="search-heading" data-i18n="search_heading">Find a person</h2>
+    <p class="lede"><span data-i18n="search_lede">Type a username. Free sources run first; gated sources show this status until you add a key — never “not found”:</span> <span class="status status-notchecked">not_checked</span></p>
+    <form id="live-search-form" class="search-form">
+      <label class="field field-seed"><span data-i18n="seed_label">Seed — username, email, name, URL, image, hashtag, phrase, IP or domain</span>
+        <input id="live-seed" type="text" placeholder="e.g. octocat, a name, an email, a post URL…" data-i18n-placeholder="seed_placeholder" required autocomplete="off">
+      </label>
+      <label class="field"><span data-i18n="type_label">Type</span>
+        <select id="live-seed-type"><option value="auto">auto-detect</option><option value="username">username</option><option value="domain">domain</option><option value="email">email</option><option value="name">name</option><option value="url">profile / post URL</option><option value="image">image URL</option><option value="hashtag">hashtag</option><option value="phrase">exact phrase</option><option value="ip">IP address</option><option value="multi">multi-seed (; separated)</option><option value="profile">direct profile URL (v8)</option><option value="company">company domain (v8)</option><option value="wallet">crypto wallet address (v8)</option><option value="plate">vehicle plate — public posts only (v8)</option></select>
+      </label>
+      <label class="field"><span data-i18n="name_context_label">Name context (city / company, name seeds only)</span><input id="live-seed-context" type="text" placeholder="e.g. Islamabad, Acme Ltd (optional)" data-i18n-placeholder="name_context_placeholder" autocomplete="off"></label>
+      <label class="field check-field"><span data-i18n="direct_label">Direct Profile Mode (v9)</span><input id="live-direct" type="checkbox"></label>
+      <label class="field check-field"><span data-i18n="screenshots_label">Browser screenshots as proof (v9)</span><input id="live-screenshots" type="checkbox"></label>
+      <label class="field check-field"><span data-i18n="cache_label">Use the 1-hour result cache (v9)</span><input id="live-cache" type="checkbox" checked></label>
+      <button type="submit" class="search-btn" data-i18n="search_button">Search live</button>
+    </form>
+    <details class="key-details">
+      <summary data-i18n="keys_summary">Keys for this run only, grouped: social / search / infra / image / AI — never stored, never echoed back. Full key catalog in Settings.</summary>
+      <div class="key-grid">
+        <label class="field"><span data-i18n="youtube_key_label">YouTube API key</span><input id="live-youtube-key" type="password" placeholder="YouTube API key (optional)"></label>
+        <label class="field"><span data-i18n="aggregator_key_label">Licensed aggregator key</span><input id="live-aggregator-key" type="password" placeholder="Licensed aggregator key (optional)"></label>
+        <label class="field"><span data-i18n="aggregator_url_label">Aggregator base URL</span><input id="live-aggregator-url" type="text" placeholder="Aggregator base URL (optional)"></label>
+        <label class="field"><span data-i18n="watch_domains_label">Watch domains</span><input id="live-watch-domains" type="text" placeholder="Watch domains, comma separated (optional)"></label>
+      </div>
+    </details>
+    <p id="live-search-result" class="result-line" role="status"></p>
+    <details class="check-details">
+      <summary><strong data-i18n="before_run">Before-run check:</strong> <span id="before-run-text"></span></summary>
+      <ul id="before-run-list" class="check-list"></ul>
+      <p id="cost-text"></p><ul id="cost-list" class="check-list"></ul>
+    </details>
+    <p class="legend" aria-label="Status legend">
+      <span class="status status-found">found</span>
+      <span class="status status-notfound">not_found</span>
+      <span class="status status-notchecked">not_checked</span>
+      <span class="status status-blocked">blocked</span>
+      <span class="status status-gated">gated_paid / gated_login</span>
+      <span class="status status-snippet">search_snippet</span>
+      <span class="status status-derived">derived</span>
+    </p>
+  </section>
+
+  <!-- Balanced 3-column core: profile | graph | evidence -->
+  <div class="grid-main">
+    <section class="panel profile-summary" id="profile-panel">
+      <h2 data-i18n="profile_summary_heading">Profile summary</h2>
+      <div class="toolbar">
+        <label><span data-i18n="filter_profiles">Filter profiles</span> <input id="search" type="text" placeholder="Search handles, platforms…" data-i18n-placeholder="filter_placeholder"></label>
+        <label><span data-i18n="platform_label">Platform</span> <select id="platform-filter" multiple size="1">
+          <option value="github">github</option><option value="bluesky">bluesky</option>
+          <option value="mastodon">mastodon</option><option value="hackernews">hackernews</option>
+          <option value="telegram">telegram</option><option value="youtube">youtube</option>
+        </select></label>
+        <label><span data-i18n="confidence_label">Confidence ≥</span> <input id="confidence-slider" type="range" min="0" max="100" value="0"> <span id="confidence-value">0</span>%</label>
+        <label class="check"><input id="confirmed-only" type="checkbox"> <span data-i18n="confirmed_only">Confirmed only</span></label>
+        <label><span data-i18n="provenance_label">Provenance / status</span> <select id="provenance-filter"><option value="" data-i18n="all_statuses">all statuses</option><option value="found">found</option><option value="candidate">candidate</option><option value="confirmed">confirmed</option><option value="possible">possible</option><option value="rejected">rejected</option><option value="not_checked">not_checked</option></select></label>
+      </div>
+      <div id="summary-content"><p class="empty-note" data-i18n="select_profile_note">Select a profile to see its summary.</p></div>
+      <h3 data-i18n="profiles_heading">Profiles</h3>
+      <div id="profile-list"></div>
+    </section>
+
+    <section class="panel graph-panel">
+      <h2><span data-i18n="graph_heading">Network graph</span> <span class="hint" data-i18n="graph_hint">Drag any node · Strong = solid · Weak = dashed · bridge node = amber</span></h2>
+      <svg id="graph" viewBox="0 0 640 460" width="100%" height="460" role="img" aria-label="Network graph">
+        <g id="graph-edges"></g><g id="graph-nodes"></g>
+      </svg>
+      <p id="graph-stats" class="meta"></p>
+      <h3><span data-i18n="timeline_heading">Timeline</span> <button id="timeline-play" type="button" class="btn-small" data-i18n="play_button">▶ Play</button></h3>
+      <input id="timeline-slider" type="range" min="0" max="0" value="0">
+      <p id="timeline-event" class="meta"></p>
+      <p class="hint" data-i18n="timeline_hint">Moving the timeline shows only the graph as it was at that date. Nodes with no date are always shown.</p>
+    </section>
+
+    <section class="panel evidence-panel" id="evidence-panel">
+      <h2 data-i18n="evidence_heading">Evidence</h2>
+      <div id="evidence-list"><p class="empty-note" data-i18n="evidence_note">Select a profile to see its evidence, with source and method for every fact.</p></div>
+      <div id="alerts-panel"><h2><span data-i18n="alerts_heading">Alerts</span> <span id="alert-count"></span></h2>
+      <div id="alerts-list"><p class="empty-note" data-i18n="no_alerts">No alerts yet.</p></div></div>
+      <h2 data-i18n="possible_heading">Possible matches — review queue</h2>
+      <div id="possible-list"><p class="empty-note" data-i18n="no_possible">No possible matches queued yet.</p></div>
+    </section>
+  </div>
+
+  <!-- Secondary detail: collapsible, so the page is not one endless scroll -->
+  <div class="secondary">
+    <details class="panel details-panel">
+      <summary><h2 data-i18n="progress_heading">Investigation progress</h2></summary>
+      <div id="progress-content"><p class="empty-note" data-i18n="no_investigation">No investigation yet — run a live search.</p></div>
+    </details>
+    <details class="panel details-panel">
+      <summary><h2 data-i18n="analysis_heading">Analysis</h2></summary>
+      <div id="analysis-content"><p class="empty-note" data-i18n="no_analysis">No analysis yet — run a live search.</p></div>
+    </details>
+    <details class="panel details-panel">
+      <summary><h2 data-i18n="behaviour_heading">Behaviour over time</h2></summary>
+      <div id="behaviour-content"><p class="empty-note" data-i18n="no_analysis">No analysis yet — run a live search.</p></div>
+    </details>
+    <details class="panel details-panel">
+      <summary><h2 data-i18n="risk_heading">Risk signals &amp; planner</h2></summary>
+      <div id="risk-planner-content"><p class="empty-note" data-i18n="no_analysis">No analysis yet — run a live search.</p></div>
+    </details>
+    <details class="panel details-panel" id="v2-panel">
+      <summary><h2 data-i18n="site_checks_heading">Site checks, Wayback &amp; report draft</h2></summary>
+      <div id="v2-content"><p class="empty-note" data-i18n="no_analysis">No analysis yet — run a live search.</p></div>
+    </details>
+    <details class="panel details-panel">
+      <summary><h2 data-i18n="compare_heading">Compare</h2></summary>
+      <div class="compare-row">
+        <select id="compare-a" aria-label="First profile"></select>
+        <select id="compare-b" aria-label="Second profile"></select>
+        <button id="compare-btn" type="button" data-i18n="compare_button">Compare</button>
+      </div>
+      <div id="compare-result"></div>
+    </details>
+  </div>
+</main>
+
+<main id="settings-view" hidden>
+  <section class="panel">
+    <h2 data-i18n="settings_heading">Settings — API keys</h2>
+    <p data-i18n="settings_intro">Keys are used for one run only and are never echoed back. For locked storage, set a vault passphrase and use the CLI vault (see the user guide).</p>
+    <form id="key-form" class="search-form">
+      <label class="field"><span data-i18n="key_name_label">Key name</span><input id="key-name" type="text" placeholder="Key name, e.g. youtube_api_key" required></label>
+      <label class="field"><span data-i18n="key_value_label">Key value</span><input id="key-value" type="password" placeholder="Key value" required></label>
+      <button type="submit" data-i18n="save_key_button">Save key name</button>
+    </form>
+    <p id="key-result"></p>
+    <div id="adapter-list"></div>
+    <p data-i18n="roles_text">Roles: viewer = read-only, analyst = search + export, admin = keys too. Set PERSONATRACE_ROLE before starting the server.</p>
+  </section>
+</main>
+<script src="/static/i18n.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

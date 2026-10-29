@@ -1,0 +1,18 @@
+# PersonaTrace Ultimate — runtime is Python 3.12, mostly stdlib.
+# pytest is needed for the test suite.
+# Pillow is required for full pHash image formats (JPEG/WebP/GIF/TIFF
+# in addition to stdlib BMP/PNG/PPM) and for OCR image description.
+# ReportLab is used for PDF export when installed; without it the
+# built-in stdlib PDF writer is used instead (still a real PDF).
+pytest>=8.0
+Pillow>=10.0
+reportlab>=4.0
+# v9 optional: real browser screenshots as proof (features/v9.py
+# capture_screenshots). The app runs without it and falls back to
+# labelled snapshot proof cards. Install the browser once with:
+#   playwright install firefox
+playwright>=1.40
+# v9 optional: yt-dlp — second route for public YouTube captions
+# (features/v9.py youtube_captions falls back to it when the raw
+# timedtext route returns an empty body). Install with:
+#   pip install yt-dlp

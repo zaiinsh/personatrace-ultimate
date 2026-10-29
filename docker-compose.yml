@@ -1,0 +1,14 @@
+# Production team store: Postgres + Neo4j for PersonaTrace migration exports.
+# Usage: docker compose up -d, then run --export-sql / --export-cypher and load into these services.
+services:
+  postgres:
+    image: postgres:16
+    environment: {POSTGRES_USER: personatrace, POSTGRES_PASSWORD: change-me, POSTGRES_DB: personatrace}
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  neo4j:
+    image: neo4j:5
+    environment: {NEO4J_AUTH: neo4j/change-me}
+    ports: ["7474:7474", "7687:7687"]
+    volumes: [neodata:/data]
+volumes: {pgdata: {}, neodata: {}}
